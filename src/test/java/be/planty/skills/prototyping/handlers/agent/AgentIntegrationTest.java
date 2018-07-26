@@ -5,7 +5,6 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.RequestEnvelope;
 import com.amazon.ask.model.Response;
 import com.amazon.ask.model.ui.OutputSpeech;
-import com.amazon.ask.model.ui.SsmlOutputSpeech;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -16,13 +15,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for the {@link AgentClient}.
  */
 //@RunWith(SpringRunner.class)
-public class AgentClientTest {
+public class AgentIntegrationTest {
 
     static final AgentClient agentClient = new AgentClient();
 
