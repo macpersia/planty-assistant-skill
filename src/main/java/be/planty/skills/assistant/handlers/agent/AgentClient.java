@@ -75,33 +75,26 @@ public class AgentClient {
         return authHeader.substring(7);
     }
 
-    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input) throws AuthenticationException {
+    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, Object message) throws AuthenticationException {
 
-            final CompletableFuture<Optional<Response>> futureResponse = new CompletableFuture<>();
+        final CompletableFuture<Optional<Response>> futureResponse = new CompletableFuture<>();
 
-            final String accessToken = login(baseUrl, username, password);
-            final String wsUrl = System.getProperty("be.planty.assistant.ws.url");
-            final String url = wsUrl + "/action?access_token=" + accessToken;
-            final WebSocketStompClient stompClient = createStompClient();
-            final StompSessionHandler handler = new AgentSessionHandler(input, futureResponse);
+        final String accessToken = login(baseUrl, username, password);
+        final String wsUrl = System.getProperty("be.planty.assistant.ws.url");
+        final String url = wsUrl + "/action?access_token=" + accessToken;
+        final WebSocketStompClient stompClient = createStompClient();
+        final StompSessionHandler handler = new AgentSessionHandler(input, futureResponse);
 
-            logger.info("Connecting to: " + url + " ...");
-            final ListenableFuture<StompSession> futureSession = stompClient.connect(url, handler);
-            futureSession.addCallback(
-                    session -> {
-                        logger.info("Connected!");
-                        session.subscribe("/topic/action.res", handler);
-                        //final HashMap message = new HashMap() {{
-                        //    put("to", "Agent X");
-                        //    put("message", "A message to myself!");
-                        //}};
-                        final IntentRequest intentRequest = (IntentRequest) input.getRequestEnvelope().getRequest();
-                        final String appName = intentRequest.getIntent().getSlots().get("WebAppName").getValue();
-                        final String message = "Create an app named '" + appName + "'";
-                        logger.info("Sending a message to /topic/action.req...");
-                        session.send("/topic/action.req", message);
-                    },
-                    err -> logger.error(err.getMessage(), err));
-            return futureResponse;
-        }
+        logger.info("Connecting to: " + url + " ...");
+        final ListenableFuture<StompSession> futureSession = stompClient.connect(url, handler);
+        futureSession.addCallback(
+            session -> {
+                logger.info("Connected!");
+                session.subscribe("/topic/action.res", handler);
+                logger.info("Sending a message to /topic/action.req...");
+                session.send("/topic/action.req", message);
+            },
+            err -> logger.error(err.getMessage(), err));
+        return futureResponse;
+    }
 }

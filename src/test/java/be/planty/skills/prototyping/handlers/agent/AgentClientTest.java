@@ -1,6 +1,7 @@
 package be.planty.skills.prototyping.handlers.agent;
 
 import be.planty.skills.assistant.handlers.agent.AgentClient;
+import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.Response;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
@@ -24,7 +25,8 @@ public class AgentClientTest {
 
     @Test
     public void messageAgent() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
-        final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(null);
+        final HandlerInput input = HandlerInput.builder().build();
+        final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(input, "Test Message!");
         assertNotNull(futureSession);
         final Optional<Response> optResponse = futureSession.get(5, SECONDS);
         assertTrue("No response is present!", optResponse.isPresent());
