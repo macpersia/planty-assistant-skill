@@ -15,6 +15,7 @@ public class AssistantStreamHandler extends SkillStreamHandler {
                 .addRequestHandlers(
                         new CancelandStopIntentHandler(),
                         new HelloWorldIntentHandler(),
+                        new EmailAddressIntentHandler(),
                         new FallbackIntentHandler(),
                         new HelpIntentHandler(),
                         new LaunchRequestHandler(),

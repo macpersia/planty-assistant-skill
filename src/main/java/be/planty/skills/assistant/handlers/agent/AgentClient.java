@@ -1,7 +1,6 @@
 package be.planty.skills.assistant.handlers.agent;
 
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
-import com.amazon.ask.model.IntentRequest;
 import com.amazon.ask.model.Response;
 import org.apache.http.auth.AuthenticationException;
 import org.slf4j.Logger;
