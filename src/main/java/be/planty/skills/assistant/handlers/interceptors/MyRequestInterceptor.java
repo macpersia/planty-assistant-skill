@@ -19,7 +19,8 @@ public class MyRequestInterceptor implements RequestInterceptor {
         // input.getAttributesManager().savePersistentAttributes();
         //final RequestEnvelope reqEnvelope = input.getRequestEnvelope();
         try {
-            logger.info(">>>> reqEnvelope:\n" + prettyPrinter.writeValueAsString(input));
+            logger.info(">>>> input.context:\n" + prettyPrinter.writeValueAsString(input.getContext()));
+            logger.info(">>>> input.reqEnvelope:\n" + prettyPrinter.writeValueAsString(input.getRequestEnvelope()));
 
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
