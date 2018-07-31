@@ -5,7 +5,9 @@ import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.RequestEnvelope;
 import com.amazon.ask.model.Response;
 import com.amazon.ask.request.Predicates;
-import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.json.JsonParserFactory;
@@ -19,7 +21,7 @@ public class EmailAddressIntentHandler implements RequestHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(EmailAddressIntentHandler.class);
 
-    private final static JsonFactory jsonFactory = new JsonFactory();
+    private static final ObjectWriter prettyPrinter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
     @Override
      public boolean canHandle(HandlerInput input) {
@@ -34,15 +36,15 @@ public class EmailAddressIntentHandler implements RequestHandler {
          final String apiAccessToken = reqEnvelope.getContext().getSystem().getApiAccessToken();
          logger.info(">>>> accessToken: " + accessToken);
          logger.info(">>>> apiAccessToken: " + apiAccessToken);
-         if (accessToken == null && apiAccessToken == null) {
-             final String text = "Please login with Amazon, and then try again.";
+         if (accessToken == null) {
+             final String text = "Please link this skill, and try again.";
              return input.getResponseBuilder()
                      .withLinkAccountCard()
                      .withSpeech(text)
-                     .withSimpleCard("LWA Required", text)
+                     .withSimpleCard("Account Linking Needed!", text)
                      .build();
          } else {
-             emailAddress = getEmailAddress(accessToken != null ? accessToken : apiAccessToken);
+             emailAddress = getEmailAddress(accessToken);
          }
          final String speechText = "Your registered email address is " + emailAddress;
          return input.getResponseBuilder()
@@ -55,7 +57,14 @@ public class EmailAddressIntentHandler implements RequestHandler {
         final String baseUrl = "https://api.amazon.com/user/profile?access_token=" + accessToken;
         final ResponseEntity<String> response = new RestTemplate()
                 .getForEntity(baseUrl, String.class);
+        try {
+            logger.info(">>>> Profile API response.statusCode: " + prettyPrinter.writeValueAsString(response.getStatusCode()));
+            logger.info(">>>> Profile API response.body:\n" + prettyPrinter.writeValueAsString(response.getBody()));
+            logger.info(">>>> Profile API response.headers:\n" + prettyPrinter.writeValueAsString(response.getHeaders()));
 
+        } catch (JsonProcessingException e) {
+            logger.error(e.getMessage(), e);
+        }
         if (response.getStatusCode().isError()) {
             logger.error(response.toString());
             return null;

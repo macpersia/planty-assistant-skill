@@ -17,7 +17,7 @@ public class MyExecptionHandler implements ExceptionHandler {
     @Override
     public Optional<Response> handle(HandlerInput input, Throwable throwable) {
         return input.getResponseBuilder()
-                .withSpeech("An error was encountered while handling your request. Try again later.")
+                .withSpeech("An error occurred while handling your request. Try again later.")
                 .build();
     }
 }
