@@ -91,9 +91,11 @@ public class AgentClient {
             session -> {
                 logger.info("Connected!");
                 final Optional<String> emailAddress = getEmailAddress(input.getRequestEnvelope().getSession());
-                final String resDest = "/topic/action.res/" + emailAddress;
+                //final String resDest = "/topic/action.res";
+                final String resDest = "/topic/action.res/" + emailAddress.orElse(null);
                 session.subscribe(resDest, handler);
-                final String reqDest = "/topic/action.req/" + emailAddress;
+                //final String reqDest = "/topic/action.req";
+                final String reqDest = "/topic/action.req/" + emailAddress.orElse(null);
                 logger.info("Sending a message to " + reqDest + "...");
                 session.send(reqDest, message);
             },
