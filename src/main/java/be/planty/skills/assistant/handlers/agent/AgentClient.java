@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
 import static java.util.Arrays.asList;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -89,9 +90,12 @@ public class AgentClient {
         futureSession.addCallback(
             session -> {
                 logger.info("Connected!");
-                session.subscribe("/topic/action.res", handler);
-                logger.info("Sending a message to /topic/action.req...");
-                session.send("/topic/action.req", message);
+                final Optional<String> emailAddress = getEmailAddress(input.getRequestEnvelope().getSession());
+                final String resDest = "/topic/action.res/" + emailAddress;
+                session.subscribe(resDest, handler);
+                final String reqDest = "/topic/action.req/" + emailAddress;
+                logger.info("Sending a message to " + reqDest + "...");
+                session.send(reqDest, message);
             },
             err -> logger.error(err.getMessage(), err));
         return futureResponse;
