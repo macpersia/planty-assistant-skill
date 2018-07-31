@@ -30,17 +30,19 @@ public class EmailAddressIntentHandler implements RequestHandler {
      public Optional<Response> handle(HandlerInput input) {
          final String emailAddress;
          final RequestEnvelope reqEnvelope = input.getRequestEnvelope();
-//         final Permissions permissions = reqEnvelope.getSession().getUser().getPermissions();
          final String accessToken = reqEnvelope.getSession().getUser().getAccessToken();
-         if (accessToken == null) {
+         final String apiAccessToken = reqEnvelope.getContext().getSystem().getApiAccessToken();
+         logger.info(">>>> accessToken: " + accessToken);
+         logger.info(">>>> apiAccessToken: " + apiAccessToken);
+         if (accessToken == null && apiAccessToken == null) {
+             final String text = "Please login with Amazon, and then try again.";
              return input.getResponseBuilder()
                      .withLinkAccountCard()
-                     .withSpeech("Please use a companion app to authenticate on Amazon")
+                     .withSpeech(text)
+                     .withSimpleCard("LWA Required", text)
                      .build();
-//             final String apiAccessToken = reqEnvelope
-//                     .getContext().getSystem().getApiAccessToken();
          } else {
-            emailAddress = getEmailAddress(accessToken);
+             emailAddress = getEmailAddress(accessToken != null ? accessToken : apiAccessToken);
          }
          final String speechText = "Your registered email address is " + emailAddress;
          return input.getResponseBuilder()
