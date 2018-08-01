@@ -41,7 +41,8 @@ public class AgentIntegrationTest {
         final RequestEnvelope mockEnvelope = RequestEnvelope.builder()
                 .withSession(Session.builder()
                         .withAttributes(new HashMap() {{
-                            put("email", "agent.prototyper@localhost");
+                            //put("email", "agent.prototyper@localhost");
+                            put("email", "agent.prototyper");
                         }}).build())
                 .build();
         when(mockInput.getRequestEnvelope())
