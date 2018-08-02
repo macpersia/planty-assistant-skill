@@ -27,7 +27,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
 import static java.util.Arrays.asList;
-import static java.util.Optional.of;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class AgentClient {
@@ -82,7 +81,7 @@ public class AgentClient {
         return authHeader.substring(7);
     }
 
-    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, Object message) throws AuthenticationException {
+    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, String message) throws AuthenticationException {
 
         final CompletableFuture<Optional<Response>> futureResponse = new CompletableFuture<>();
 
@@ -97,16 +96,9 @@ public class AgentClient {
         futureSession.addCallback(
             session -> {
                 logger.info("Connected!");
-                // TODO: revert this!
-                //final Optional<String> emailAddress = getEmailAddress(input.getRequestEnvelope().getSession());
-                final Optional<String> emailAddress = of("agent.prototyper");
-
-                //final String resDest = "/topic/action.res";
-                //final String resDest = "/topic/action.res/" + emailAddress.orElse(null);
+                final Optional<String> emailAddress = getEmailAddress(input.getRequestEnvelope().getSession());
                 final String resDest = "/user/queue/action-responses/" + emailAddress.orElse(null);
                 session.subscribe(resDest, handler);
-                //final String reqDest = "/topic/action.req";
-                //final String reqDest = "/topic/action.req/" + emailAddress.orElse(null);
                 final String reqDest = "/topic/action-requests/" + emailAddress.orElse(null);
                 logger.info("Sending a message to '" + reqDest + "' : " + message);
                 session.send(reqDest, message);

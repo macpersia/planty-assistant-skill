@@ -7,7 +7,6 @@ import com.amazon.ask.model.Response;
 import com.amazon.ask.model.Session;
 import com.amazon.ask.model.ui.OutputSpeech;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -20,7 +19,6 @@ import java.util.concurrent.TimeoutException;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -41,8 +39,7 @@ public class AgentIntegrationTest {
         final RequestEnvelope mockEnvelope = RequestEnvelope.builder()
                 .withSession(Session.builder()
                         .withAttributes(new HashMap() {{
-                            //put("email", "agent.prototyper@localhost");
-                            put("email", "agent.prototyper");
+                            put("email", "agent.prototyper@localhost");
                         }}).build())
                 .build();
         when(mockInput.getRequestEnvelope())
@@ -51,15 +48,10 @@ public class AgentIntegrationTest {
         final String message = "Ping!";
         final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
         assertNotNull(futureSession);
-        final Optional<Response> optResponse = futureSession.get(5, SECONDS);
+        final Optional<Response> optResponse = futureSession.get(30, SECONDS);
         assertTrue("No outputSpeech is present!", optResponse.isPresent());
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         //assertTrue(outputSpeech.toString().contains("Pong!"));
-    }
-
-    @AfterClass
-    public static void tearDown() throws InterruptedException {
-        Thread.sleep(2000);
     }
 }
