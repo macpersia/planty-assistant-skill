@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -25,13 +26,17 @@ public final class AssistantUtils {
     private static final ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
 
     public static Optional<String> getEmailAddress(Session session) {
-        final Optional<String> emailAttribute = of(session.getAttributes().get("email")).map(o -> o.toString());
+        final Map<String, Object> attributes = session.getAttributes();
+        final String emailKey = "email";
+        final Optional<String> emailAttribute = of(attributes.get(emailKey)).map(Object::toString);
         if (emailAttribute.isPresent())
             return emailAttribute;
 
         final String accessToken = session.getUser().getAccessToken();
         logger.info(">>>> accessToken: " + accessToken);
-        return  (accessToken != null) ? getEmailAddress(accessToken) : empty();
+        final Optional<String> foundEmail = (accessToken != null) ? getEmailAddress(accessToken) : empty();
+        foundEmail.ifPresent(e -> attributes.put(emailKey, e));
+        return foundEmail;
     }
 
     public static Optional<String> getEmailAddress(String accessToken) {

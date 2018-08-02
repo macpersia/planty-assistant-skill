@@ -6,6 +6,8 @@ import com.amazon.ask.model.RequestEnvelope;
 import com.amazon.ask.model.Response;
 import com.amazon.ask.model.Session;
 import com.amazon.ask.model.ui.OutputSpeech;
+import com.amazon.ask.model.ui.SsmlOutputSpeech;
+import com.amazon.ask.response.ResponseBuilder;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -17,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -44,6 +47,8 @@ public class AgentIntegrationTest {
                 .build();
         when(mockInput.getRequestEnvelope())
                 .thenReturn(mockEnvelope);
+        when(mockInput.getResponseBuilder())
+                .thenReturn(new ResponseBuilder());
 
         final String message = "Ping!";
         final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
@@ -52,6 +57,7 @@ public class AgentIntegrationTest {
         assertTrue("No outputSpeech is present!", optResponse.isPresent());
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
-        //assertTrue(outputSpeech.toString().contains("Pong!"));
+        assertNotNull("SSML", outputSpeech.getType());
+        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
     }
 }
