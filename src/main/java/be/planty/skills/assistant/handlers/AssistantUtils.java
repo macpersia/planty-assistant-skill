@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 public final class AssistantUtils {
 
@@ -28,7 +28,7 @@ public final class AssistantUtils {
     public static Optional<String> getEmailAddress(Session session) {
         final Map<String, Object> attributes = session.getAttributes();
         final String emailKey = "email";
-        final Optional<String> emailAttribute = of(attributes.get(emailKey)).map(Object::toString);
+        final Optional<String> emailAttribute = ofNullable(attributes.get(emailKey)).map(Object::toString);
         if (emailAttribute.isPresent())
             return emailAttribute;
 
@@ -58,7 +58,7 @@ public final class AssistantUtils {
         try {
             final Profile profile;
             profile = objectMapper.readValue(response.getBody(), Profile.class);
-            return of(profile.email);
+            return ofNullable(profile.email);
 
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
