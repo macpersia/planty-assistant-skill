@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 public final class AssistantUtils {
 
@@ -25,7 +25,7 @@ public final class AssistantUtils {
     private static final ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
 
     public static Optional<String> getEmailAddress(Session session) {
-        final Optional<String> emailAttribute = of(session.getAttributes().get("email")).map(o -> o.toString());
+        final Optional<String> emailAttribute = ofNullable(session.getAttributes().get("email")).map(Object::toString);
         if (emailAttribute.isPresent())
             return emailAttribute;
 
@@ -53,7 +53,7 @@ public final class AssistantUtils {
         try {
             final Profile profile;
             profile = objectMapper.readValue(response.getBody(), Profile.class);
-            return of(profile.email);
+            return ofNullable(profile.email);
 
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
