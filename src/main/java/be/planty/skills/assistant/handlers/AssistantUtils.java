@@ -1,5 +1,6 @@
 package be.planty.skills.assistant.handlers;
 
+import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.Session;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,18 +27,28 @@ public final class AssistantUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
 
+    public static final String EMAIL_KEY = "email";
+
+    public static Optional<String> getEmailAddress(HandlerInput input) {
+        final Session session = input.getRequestEnvelope().getSession();
+        final Optional<String> emailAddress = getEmailAddress(session);
+        emailAddress.ifPresent( ea ->
+            ofNullable(input.getAttributesManager().getSessionAttributes())
+                    .orElse(new HashMap<>())
+                    .put(EMAIL_KEY, ea));
+        return emailAddress;
+    }
+
     public static Optional<String> getEmailAddress(Session session) {
         final Map<String, Object> attributes = session.getAttributes();
-        final String emailKey = "email";
-        final Optional<String> emailAttribute = ofNullable(attributes.get(emailKey)).map(Object::toString);
+        final Optional<String> emailAttribute = ofNullable(attributes)
+                .map(atts -> atts.get(EMAIL_KEY)).map(Object::toString);
         if (emailAttribute.isPresent())
             return emailAttribute;
 
         final String accessToken = session.getUser().getAccessToken();
         logger.info(">>>> accessToken: " + accessToken);
-        final Optional<String> foundEmail = (accessToken != null) ? getEmailAddress(accessToken) : empty();
-        foundEmail.ifPresent(e -> attributes.put(emailKey, e));
-        return foundEmail;
+        return (accessToken != null) ? getEmailAddress(accessToken) : empty();
     }
 
     public static Optional<String> getEmailAddress(String accessToken) {

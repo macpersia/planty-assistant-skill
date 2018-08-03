@@ -25,8 +25,7 @@ public class EmailAddressIntentHandler implements RequestHandler {
 
      @Override
      public Optional<Response> handle(HandlerInput input) {
-         final Session session = input.getRequestEnvelope().getSession();
-         final Optional<String> emailAddress = AssistantUtils.getEmailAddress(session);
+         final Optional<String> emailAddress = AssistantUtils.getEmailAddress(input);
          if (!emailAddress.isPresent()) {
              final String text = "Please link this skill, and try again.";
              return input.getResponseBuilder()
@@ -35,9 +34,7 @@ public class EmailAddressIntentHandler implements RequestHandler {
                      .withSimpleCard("Account Linking Needed!", text)
                      .build();
          }
-         final String speechText = emailAddress.isPresent() ?
-                 "Your registered email address is " + emailAddress.get()
-                 : "Sorry! I couldn't get the email address from your profile.";
+         final String speechText = "Your registered email address is " + emailAddress.get();
          return input.getResponseBuilder()
                  .withSpeech(speechText)
                  .withSimpleCard("EmailAddress", speechText)
