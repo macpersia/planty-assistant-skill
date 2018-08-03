@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.converter.CompositeMessageConverter;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -43,8 +45,12 @@ public class AgentClient {
                 new WebSocketTransport(socketClient)
         ));
         final WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
-
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        
+        stompClient.setMessageConverter(
+                new CompositeMessageConverter(asList(
+                    new MappingJackson2MessageConverter(),
+                    new StringMessageConverter()
+        )));
         return stompClient;
     }
 
@@ -75,7 +81,7 @@ public class AgentClient {
         return authHeader.substring(7);
     }
 
-    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, Object message) throws AuthenticationException {
+    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, String message) throws AuthenticationException {
 
         final CompletableFuture<Optional<Response>> futureResponse = new CompletableFuture<>();
 
@@ -91,12 +97,10 @@ public class AgentClient {
             session -> {
                 logger.info("Connected!");
                 final Optional<String> emailAddress = getEmailAddress(input.getRequestEnvelope().getSession());
-                //final String resDest = "/topic/action.res";
-                final String resDest = "/topic/action.res/" + emailAddress.orElse(null);
+                final String resDest = "/user/queue/action-responses/" + emailAddress.orElse(null);
                 session.subscribe(resDest, handler);
-                //final String reqDest = "/topic/action.req";
-                final String reqDest = "/topic/action.req/" + emailAddress.orElse(null);
-                logger.info("Sending a message to " + reqDest + "...");
+                final String reqDest = "/topic/action-requests/" + emailAddress.orElse(null);
+                logger.info("Sending a message to '" + reqDest + "' : " + message);
                 session.send(reqDest, message);
             },
             err -> logger.error(err.getMessage(), err));
