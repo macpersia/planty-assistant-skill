@@ -17,7 +17,7 @@ public class LaunchRequestHandler implements RequestHandler {
 
      @Override
      public Optional<Response> handle(HandlerInput input) {
-         String speechText = "Welcome to the Alexa Skills Kit, you can say hello";
+         String speechText = "Welcome to Planty Assistant Skill. You can ask Planty what's your email address.";
          return input.getResponseBuilder()
                  .withSpeech(speechText)
                  .withSimpleCard("HelloWorld", speechText)

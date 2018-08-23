@@ -13,12 +13,12 @@ public class AssistantStreamHandler extends SkillStreamHandler {
     protected static SkillBuilder getSkillBuilder() {
         return Skills.standard()
                 .addRequestHandlers(
-                        new CancelandStopIntentHandler(),
+                        new HelpIntentHandler(),
+                        new LaunchRequestHandler(),
                         new HelloWorldIntentHandler(),
                         new EmailAddressIntentHandler(),
                         new FallbackIntentHandler(),
-                        new HelpIntentHandler(),
-                        new LaunchRequestHandler(),
+                        new CancelandStopIntentHandler(),
                         new SessionEndedRequestHandler())
                 .addRequestInterceptor(new MyRequestInterceptor())
                 .addResponseInterceptor(new MyResponseInterceptor())

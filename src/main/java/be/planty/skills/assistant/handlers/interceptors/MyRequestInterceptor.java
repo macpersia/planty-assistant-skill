@@ -16,11 +16,12 @@ public class MyRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void process(HandlerInput input) {
-        //input.getAttributesManager().savePersistentAttributes();
+        //final AttributesManager attsManager = input.getAttributesManager();
+        //attsManager.savePersistentAttributes();
         //final RequestEnvelope reqEnvelope = input.getRequestEnvelope();
         try {
             //logger.info(">>>> input.context:\n" + prettyPrinter.writeValueAsString(input.getContext()));
-            logger.info(">>>> input.reqEnvelope:\n" + prettyPrinter.writeValueAsString(input.getRequestEnvelope()));
+            logger.debug(">>>> input.reqEnvelope: " + prettyPrinter.writeValueAsString(input.getRequestEnvelope()));
 
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
