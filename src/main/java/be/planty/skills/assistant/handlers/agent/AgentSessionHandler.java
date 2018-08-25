@@ -25,8 +25,7 @@ public class AgentSessionHandler extends StompSessionHandlerAdapter {
     public AgentSessionHandler(HandlerInput input, CompletableFuture<Optional<Response>> futureResponse) {
         this.input = input;
         this.futureResponse = futureResponse;
-        final Session session = input.getRequestEnvelope().getSession();
-        final Optional<String> foundEmail = getEmailAddress(session);
+        final Optional<String> foundEmail = getEmailAddress(input);
         assert foundEmail.isPresent();
         this.emailAddress = foundEmail.get();
     }

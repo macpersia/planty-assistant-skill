@@ -96,7 +96,7 @@ public class AgentClient {
         futureSession.addCallback(
             session -> {
                 logger.info("Connected!");
-                final Optional<String> emailAddress = getEmailAddress(input.getRequestEnvelope().getSession());
+                final Optional<String> emailAddress = getEmailAddress(input);
                 final String resDest = "/user/queue/action-responses/" + emailAddress.orElse(null);
                 session.subscribe(resDest, handler);
                 final String reqDest = "/topic/action-requests/" + emailAddress.orElse(null);
