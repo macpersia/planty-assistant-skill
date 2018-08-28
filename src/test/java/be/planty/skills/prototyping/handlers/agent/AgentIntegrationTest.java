@@ -12,6 +12,7 @@ import org.apache.http.auth.AuthenticationException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -30,10 +31,10 @@ import static org.mockito.Mockito.when;
 //@RunWith(SpringRunner.class)
 public class AgentIntegrationTest {
 
-    static final AgentClient agentClient = new AgentClient();
+    private static final AgentClient agentClient = new AgentClient();
 
     @Test
-    public void messageAgent() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
+    public void messageAgentWithString() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
 
         final HandlerInput mockInput = Mockito.mock(HandlerInput.class);
         // Oops! final classes cannot be mocked
@@ -51,6 +52,35 @@ public class AgentIntegrationTest {
                 .thenReturn(new ResponseBuilder());
 
         final String message = "Ping!";
+        final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
+        assertNotNull(futureSession);
+        final Optional<Response> optResponse = futureSession.get(30, SECONDS);
+        assertTrue("No outputSpeech is present!", optResponse.isPresent());
+        final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
+        assertNotNull(outputSpeech);
+        assertNotNull("SSML", outputSpeech.getType());
+        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
+    }
+
+    @Test
+    public void messageAgentWithObject() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
+
+        final HandlerInput mockInput = Mockito.mock(HandlerInput.class);
+        // Oops! final classes cannot be mocked
+        //final RequestEnvelope mockEnvelope = mock(RequestEnvelope.class);
+        //final Session mockSession = mock(Session.class);
+        final RequestEnvelope mockEnvelope = RequestEnvelope.builder()
+                .withSession(Session.builder()
+                        .withAttributes(new HashMap() {{
+                            put("email", "agent.prototyper@localhost");
+                        }}).build())
+                .build();
+        when(mockInput.getRequestEnvelope())
+                .thenReturn(mockEnvelope);
+        when(mockInput.getResponseBuilder())
+                .thenReturn(new ResponseBuilder());
+
+        final SimpleEntry<String, String> message = new SimpleEntry<>("data", "Ping!");
         final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
         assertNotNull(futureSession);
         final Optional<Response> optResponse = futureSession.get(30, SECONDS);

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.converter.CompositeMessageConverter;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.StringMessageConverter;
+import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -27,6 +28,8 @@ import java.util.concurrent.CompletableFuture;
 
 import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
 import static java.util.Arrays.asList;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
+import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class AgentClient {
@@ -81,7 +84,7 @@ public class AgentClient {
         return authHeader.substring(7);
     }
 
-    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, String message) throws AuthenticationException {
+    public CompletableFuture<Optional<Response>> messageAgent(HandlerInput input, Object payload) throws AuthenticationException {
 
         final CompletableFuture<Optional<Response>> futureResponse = new CompletableFuture<>();
 
@@ -100,8 +103,18 @@ public class AgentClient {
                 final String resDest = "/user/queue/action-responses/" + emailAddress.orElse(null);
                 session.subscribe(resDest, handler);
                 final String reqDest = "/topic/action-requests/" + emailAddress.orElse(null);
-                logger.info("Sending a message to '" + reqDest + "' : " + message);
-                session.send(reqDest, message);
+                final String desc;
+                final StompHeaders headers = new StompHeaders();
+                headers.setDestination(reqDest);
+                if (payload instanceof String) {
+                    desc = "a string";
+                    headers.setContentType(TEXT_PLAIN);
+                } else {
+                    headers.setContentType(APPLICATION_JSON);
+                    desc = "an object";
+                }
+                logger.info("Sending " + desc + " payload to '" + reqDest + "' : " + payload);
+                session.send(headers, payload);
             },
             err -> logger.error(err.getMessage(), err));
         return futureResponse;
