@@ -33,7 +33,8 @@ public final class AssistantUtils {
         final Session session = input.getRequestEnvelope().getSession();
         final Optional<String> emailAddress = getEmailAddress(session);
         emailAddress.ifPresent( ea ->
-            ofNullable(input.getAttributesManager().getSessionAttributes())
+            ofNullable(input.getAttributesManager())
+                    .map(am -> am.getSessionAttributes())
                     .orElse(new HashMap<>())
                     .put(EMAIL_KEY, ea));
         return emailAddress;
