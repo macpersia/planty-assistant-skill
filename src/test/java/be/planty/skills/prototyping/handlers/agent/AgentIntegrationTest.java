@@ -33,7 +33,7 @@ public class AgentIntegrationTest {
 
     private static final AgentClient agentClient = new AgentClient();
 
-    @Test
+//    @Test
     public void messageAgentWithString() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
 
         final HandlerInput mockInput = Mockito.mock(HandlerInput.class);

@@ -51,8 +51,9 @@ public class AgentClient {
         
         stompClient.setMessageConverter(
                 new CompositeMessageConverter(asList(
-                    new MappingJackson2MessageConverter(),
-                    new StringMessageConverter()
+                    new MappingJackson2MessageConverter()
+//                        ,
+//                    new StringMessageConverter()
         )));
         return stompClient;
     }
