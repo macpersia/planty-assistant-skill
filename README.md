@@ -1,2 +1,2 @@
-# Assistant Skill
+# Planty Assistant Skill
 
