@@ -2,6 +2,9 @@ package be.planty.skills.assistant.handlers.agent;
 
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.http.auth.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static be.planty.models.assistant.Constants.PAYLOAD_TYPE_KEY;
 import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
 import static java.util.Arrays.asList;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
@@ -35,6 +39,9 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class AgentClient {
     
     private static final Logger logger = LoggerFactory.getLogger(AgentClient.class);
+
+    private static final MappingJackson2MessageConverter jacksonMessageConverter = new MappingJackson2MessageConverter();
+    private static final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
     private final String baseUrl = System.getProperty("be.planty.assistant.login.url");
     private final String username = System.getProperty("be.planty.assistant.access.id");
@@ -48,13 +55,10 @@ public class AgentClient {
                 new WebSocketTransport(socketClient)
         ));
         final WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
-        
+
         stompClient.setMessageConverter(
-                new CompositeMessageConverter(asList(
-                    new MappingJackson2MessageConverter()
-//                        ,
-//                    new StringMessageConverter()
-        )));
+                new CompositeMessageConverter(
+                        asList(jacksonMessageConverter, new StringMessageConverter())));
         return stompClient;
     }
 
@@ -104,20 +108,36 @@ public class AgentClient {
                 final String resDest = "/user/queue/action-responses/" + emailAddress.orElse(null);
                 session.subscribe(resDest, handler);
                 final String reqDest = "/topic/action-requests/" + emailAddress.orElse(null);
-                final String desc;
                 final StompHeaders headers = new StompHeaders();
                 headers.setDestination(reqDest);
                 if (payload instanceof String) {
-                    desc = "a string";
                     headers.setContentType(TEXT_PLAIN);
+                    logger.info("Sending a string payload to '" + reqDest + "' : " + payload);
+                    session.send(headers, payload);
                 } else {
                     headers.setContentType(APPLICATION_JSON);
-                    desc = "an object";
+                    headers.set(PAYLOAD_TYPE_KEY, payload.getClass().getTypeName());
+                    logger.info("Sending an object payload to '" + reqDest + "' : " + toPrettyJson(payload));
+                    session.send(headers, payload);
                 }
-                logger.info("Sending " + desc + " payload to '" + reqDest + "' : " + payload);
-                session.send(headers, payload);
             },
             err -> logger.error(err.getMessage(), err));
         return futureResponse;
+    }
+
+    private String toPrettyJson(Object payload) {
+        String prettyPayload;
+        try {
+            prettyPayload = payload instanceof String ?
+                (String) payload
+                : (payload instanceof byte[] ?
+                    new String((byte[]) payload)
+                    : objectWriter.writeValueAsString(payload));
+
+        } catch (JsonProcessingException e) {
+            logger.error(e.getMessage(), e);
+            prettyPayload = String.valueOf(payload);
+        }
+        return prettyPayload;
     }
 }

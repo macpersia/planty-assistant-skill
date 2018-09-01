@@ -1,5 +1,6 @@
 package be.planty.skills.prototyping.handlers.agent;
 
+import be.planty.models.assistant.ActionRequest;
 import be.planty.skills.assistant.handlers.agent.AgentClient;
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.RequestEnvelope;
@@ -33,7 +34,7 @@ public class AgentIntegrationTest {
 
     private static final AgentClient agentClient = new AgentClient();
 
-//    @Test
+    @Test
     public void messageAgentWithString() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
 
         final HandlerInput mockInput = Mockito.mock(HandlerInput.class);
@@ -80,7 +81,7 @@ public class AgentIntegrationTest {
         when(mockInput.getResponseBuilder())
                 .thenReturn(new ResponseBuilder());
 
-        final SimpleEntry<String, String> message = new SimpleEntry<>("data", "Ping!");
+        final ActionRequest message = new ActionRequest("Ping!");
         final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
         assertNotNull(futureSession);
         final Optional<Response> optResponse = futureSession.get(30, SECONDS);
@@ -88,6 +89,6 @@ public class AgentIntegrationTest {
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
-        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
+        assertEquals("<speak>All right! I'm done!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
     }
 }
