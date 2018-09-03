@@ -27,6 +27,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static be.planty.models.assistant.Constants.PAYLOAD_TYPE_KEY;
@@ -97,7 +98,8 @@ public class AgentClient {
         final String wsUrl = System.getProperty("be.planty.assistant.ws.url");
         final String url = wsUrl + "/action?access_token=" + accessToken;
         final WebSocketStompClient stompClient = createStompClient();
-        final StompSessionHandler handler = new AgentSessionHandler(input, futureResponse);
+        final String messageId = UUID.randomUUID().toString();
+        final StompSessionHandler handler = new AgentSessionHandler(input, messageId, futureResponse);
 
         logger.info("Connecting to: " + url + " ...");
         final ListenableFuture<StompSession> futureSession = stompClient.connect(url, handler);
@@ -110,6 +112,7 @@ public class AgentClient {
                 final String reqDest = "/topic/action-requests/" + emailAddress.orElse(null);
                 final StompHeaders headers = new StompHeaders();
                 headers.setDestination(reqDest);
+                headers.setMessageId(messageId);
                 if (payload instanceof String) {
                     headers.setContentType(TEXT_PLAIN);
                     logger.info("Sending a string payload to '" + reqDest + "' : " + payload);

@@ -19,7 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static be.planty.models.assistant.Constants.PAYLOAD_TYPE_KEY;
 import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
-import static com.amazonaws.util.json.Jackson.toJsonPrettyString;
 
 public class AgentSessionHandler extends StompSessionHandlerAdapter {
 
@@ -28,15 +27,23 @@ public class AgentSessionHandler extends StompSessionHandlerAdapter {
     private static final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
     private final HandlerInput input;
+    private final String messageId;
     private final CompletableFuture<Optional<Response>> futureResponse;
     private final String emailAddress;
 
-    public AgentSessionHandler(HandlerInput input, CompletableFuture<Optional<Response>> futureResponse) {
+    public AgentSessionHandler(HandlerInput input, String messageId,
+                               CompletableFuture<Optional<Response>> futureResponse) {
         this.input = input;
+        this.messageId = messageId;
         this.futureResponse = futureResponse;
         final Optional<String> foundEmail = getEmailAddress(input);
         assert foundEmail.isPresent();
         this.emailAddress = foundEmail.get();
+    }
+
+    @Override
+    public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+        super.afterConnected(session, connectedHeaders);
     }
 
     @Override
@@ -58,7 +65,8 @@ public class AgentSessionHandler extends StompSessionHandlerAdapter {
 
         final String destination = headers.getDestination();
 
-        if (destination.startsWith("/user/queue/action-responses")
+        if (headers.getFirst("correlation-id").equals(messageId)
+                && destination.startsWith("/user/queue/action-responses")
                 && destination.endsWith(emailAddress)) {
 
             final String response = payload instanceof String ?
