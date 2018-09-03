@@ -1,7 +1,6 @@
-package be.planty.skills.prototyping.handlers.agent;
+package be.planty.skills.assistant.handlers.agent;
 
 import be.planty.models.assistant.ActionRequest;
-import be.planty.skills.assistant.handlers.agent.AgentClient;
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.RequestEnvelope;
 import com.amazon.ask.model.Response;
@@ -13,7 +12,6 @@ import org.apache.http.auth.AuthenticationException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -21,9 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 /**
