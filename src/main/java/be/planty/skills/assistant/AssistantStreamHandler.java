@@ -20,8 +20,8 @@ public class AssistantStreamHandler extends SkillStreamHandler {
                         new FallbackIntentHandler(),
                         new CancelandStopIntentHandler(),
                         new SessionEndedRequestHandler())
-                .addRequestInterceptor(new MyRequestInterceptor())
-                .addResponseInterceptor(new MyResponseInterceptor())
+                //.addRequestInterceptor(new MyRequestInterceptor())
+                //.addResponseInterceptor(new MyResponseInterceptor())
                 .addExceptionHandler(new MyExecptionHandler());
     }
 
