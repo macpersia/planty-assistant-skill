@@ -41,14 +41,14 @@ public class AgentClient {
     
     private static final Logger logger = LoggerFactory.getLogger(AgentClient.class);
 
-    private static final MappingJackson2MessageConverter jacksonMessageConverter = new MappingJackson2MessageConverter();
-    private static final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
+    protected static final MappingJackson2MessageConverter jacksonMessageConverter = new MappingJackson2MessageConverter();
+    protected static final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
     private final String baseUrl = System.getProperty("be.planty.assistant.login.url");
     private final String username = System.getProperty("be.planty.assistant.access.id");
     private final String password = System.getProperty("be.planty.assistant.access.key");
 
-    private WebSocketStompClient createStompClient() {
+    protected WebSocketStompClient createStompClient() {
         final WebSocketClient socketClient = new StandardWebSocketClient();
 
         //final WebSocketStompClient stompClient = new WebSocketStompClient(socketClient);
@@ -63,7 +63,7 @@ public class AgentClient {
         return stompClient;
     }
 
-    private String login(String baseUrl, String username, String password) throws AuthenticationException {
+    protected String login(String baseUrl, String username, String password) throws AuthenticationException {
         final Map<String, String> request = new HashMap(){{
             put("username", username);
             put("password", password);
@@ -99,7 +99,7 @@ public class AgentClient {
         final String url = wsUrl + "/action?access_token=" + accessToken;
         final WebSocketStompClient stompClient = createStompClient();
         final String messageId = UUID.randomUUID().toString();
-        final StompSessionHandler handler = new AgentSessionHandler(input, messageId, futureResponse);
+        final StompSessionHandler handler = createSessionHandler(input, futureResponse, messageId);
 
         logger.info("Connecting to: " + url + " ...");
         final ListenableFuture<StompSession> futureSession = stompClient.connect(url, handler);
@@ -128,7 +128,12 @@ public class AgentClient {
         return futureResponse;
     }
 
-    private String toPrettyJson(Object payload) {
+    protected AgentSessionHandler createSessionHandler(
+            HandlerInput input, CompletableFuture<Optional<Response>> futureResponse, String messageId) {
+        return new AgentSessionHandler(input, messageId, futureResponse);
+    }
+
+    protected String toPrettyJson(Object payload) {
         String prettyPayload;
         try {
             prettyPayload = payload instanceof String ?
