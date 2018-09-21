@@ -26,10 +26,10 @@ public class AgentSessionHandler extends StompSessionHandlerAdapter {
 
     private static final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
-    private final HandlerInput input;
-    private final String messageId;
-    private final CompletableFuture<Optional<Response>> futureResponse;
-    private final String emailAddress;
+    protected final HandlerInput input;
+    protected final String messageId;
+    protected final CompletableFuture<Optional<Response>> futureResponse;
+    protected final String emailAddress;
 
     public AgentSessionHandler(HandlerInput input, String messageId,
                                CompletableFuture<Optional<Response>> futureResponse) {
