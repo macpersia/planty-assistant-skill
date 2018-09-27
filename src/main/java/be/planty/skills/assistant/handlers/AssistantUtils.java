@@ -31,25 +31,29 @@ public final class AssistantUtils {
 
     public static Optional<String> getEmailAddress(HandlerInput input) {
         final Session session = input.getRequestEnvelope().getSession();
-        final Optional<String> emailAddress = getEmailAddress(session);
-        emailAddress.ifPresent( ea ->
-            ofNullable(input.getAttributesManager())
-                    .map(am -> am.getSessionAttributes())
-                    .orElse(new HashMap<>())
-                    .put(EMAIL_KEY, ea));
-        return emailAddress;
+        synchronized (EMAIL_KEY) {
+            final Optional<String> emailAddress = getEmailAddress(session);
+            emailAddress.ifPresent(ea ->
+                    ofNullable(input.getAttributesManager())
+                            .map(am -> am.getSessionAttributes())
+                            .orElse(new HashMap<>())
+                            .put(EMAIL_KEY, ea));
+            return emailAddress;
+        }
     }
 
     public static Optional<String> getEmailAddress(Session session) {
         final Map<String, Object> attributes = session.getAttributes();
-        final Optional<String> emailAttribute = ofNullable(attributes)
-                .map(atts -> atts.get(EMAIL_KEY)).map(Object::toString);
-        if (emailAttribute.isPresent())
-            return emailAttribute;
+        synchronized (EMAIL_KEY) {
+            final Optional<String> emailAttribute = ofNullable(attributes)
+                    .map(atts -> atts.get(EMAIL_KEY)).map(Object::toString);
+            if (emailAttribute.isPresent())
+                return emailAttribute;
 
-        final String accessToken = session.getUser().getAccessToken();
-        logger.info(">>>> accessToken: " + accessToken);
-        return (accessToken != null) ? getEmailAddress(accessToken) : empty();
+            final String accessToken = session.getUser().getAccessToken();
+            logger.info(">>>> accessToken: " + accessToken);
+            return (accessToken != null) ? getEmailAddress(accessToken) : empty();
+        }
     }
 
     public static Optional<String> getEmailAddress(String accessToken) {
