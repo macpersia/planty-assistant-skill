@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static be.planty.models.assistant.Constants.ORIGIN_EMAIL_KEY;
 import static be.planty.models.assistant.Constants.PAYLOAD_TYPE_KEY;
 import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
 import static java.util.Arrays.asList;
@@ -113,6 +114,7 @@ public class AgentClient {
                 final StompHeaders headers = new StompHeaders();
                 headers.setDestination(reqDest);
                 headers.setMessageId(messageId);
+                emailAddress.ifPresent(ea -> headers.put(ORIGIN_EMAIL_KEY, asList(ea)));
                 if (payload instanceof String) {
                     headers.setContentType(TEXT_PLAIN);
                     logger.info("Sending a string payload to '" + reqDest + "' : " + payload);
