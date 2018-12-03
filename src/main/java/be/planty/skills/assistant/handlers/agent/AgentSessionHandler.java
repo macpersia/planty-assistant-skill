@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static be.planty.models.assistant.Constants.PAYLOAD_TYPE_KEY;
-import static be.planty.skills.assistant.handlers.AssistantUtils.getEmailAddress;
 
 public class AgentSessionHandler extends StompSessionHandlerAdapter {
 
@@ -29,16 +28,14 @@ public class AgentSessionHandler extends StompSessionHandlerAdapter {
     protected final HandlerInput input;
     protected final String messageId;
     protected final CompletableFuture<Optional<Response>> futureResponse;
-    protected final String emailAddress;
+    //protected final Optional<String> emailAddress;
 
     public AgentSessionHandler(HandlerInput input, String messageId,
                                CompletableFuture<Optional<Response>> futureResponse) {
         this.input = input;
         this.messageId = messageId;
         this.futureResponse = futureResponse;
-        final Optional<String> foundEmail = getEmailAddress(input);
-        assert foundEmail.isPresent();
-        this.emailAddress = foundEmail.get();
+        //this.emailAddress = getEmailAddress(input);
     }
 
     @Override
@@ -67,8 +64,9 @@ public class AgentSessionHandler extends StompSessionHandlerAdapter {
 
         if (headers.getFirst("correlation-id").equals(messageId)
                 && destination.startsWith("/user/queue/action-responses")
-                && destination.endsWith(emailAddress)) {
-
+                //&& (!emailAddress.isPresent()
+                //    || destination.endsWith(emailAddress.get()))
+        ) {
             final String response = payload instanceof String ?
                     (String) payload
                     : toPrettyJson(payload);

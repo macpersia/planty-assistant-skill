@@ -5,12 +5,15 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.model.RequestEnvelope;
 import com.amazon.ask.model.Response;
 import com.amazon.ask.model.Session;
+import com.amazon.ask.model.User;
 import com.amazon.ask.model.ui.OutputSpeech;
 import com.amazon.ask.model.ui.SsmlOutputSpeech;
 import com.amazon.ask.response.ResponseBuilder;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test class for the {@link AgentClient}.
  */
-//@RunWith(SpringRunner.class)
+@RunWith(SpringRunner.class)
 public class AgentIntegrationTest {
 
     private static final AgentClient agentClient = new AgentClient();
@@ -86,5 +89,39 @@ public class AgentIntegrationTest {
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
         assertEquals("<speak>All right! I'm done!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
+    }
+
+    @Test
+    public void messageSharedAgentWithString() throws ExecutionException, InterruptedException, TimeoutException, AuthenticationException {
+
+        final HandlerInput mockInput = Mockito.mock(HandlerInput.class);
+        // Oops! final classes cannot be mocked
+        //final RequestEnvelope mockEnvelope = mock(RequestEnvelope.class);
+        //final Session mockSession = mock(Session.class);
+        final RequestEnvelope mockEnvelope = RequestEnvelope.builder()
+                .withSession(Session.builder()
+                        .withUser(User.builder().build())
+                        .build())
+                .build();
+        when(mockInput.getRequestEnvelope())
+                .thenReturn(mockEnvelope);
+        when(mockInput.getResponseBuilder())
+                .thenReturn(new ResponseBuilder());
+
+        final String message = "Ping!";
+        final CompletableFuture<Optional<Response>> futureSession;
+        try {
+            futureSession = agentClient.messageAgent(mockInput, message);
+        } catch(Throwable th) {
+            th.printStackTrace();
+            throw th;
+        }
+        assertNotNull(futureSession);
+        final Optional<Response> optResponse = futureSession.get(30, SECONDS);
+        assertTrue("No outputSpeech is present!", optResponse.isPresent());
+        final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
+        assertNotNull(outputSpeech);
+        assertNotNull("SSML", outputSpeech.getType());
+        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
     }
 }
