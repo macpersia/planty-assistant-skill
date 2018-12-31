@@ -1,0 +1,35 @@
+node ('ecs2') {
+    def branch = "${env.BRANCH_NAME}".toLowerCase()
+
+    stage('versions in use') {
+        sh """
+            git --version
+            node --version
+            npm --version
+            java -version
+            mvn --version
+        """
+    }
+
+    stage('git') {
+		/* Changed due to a bug: "${scmBranch} is returning UNKNOW"
+		 * (https://github.com/mojohaus/buildnumber-maven-plugin/issues/53#issuecomment-373110568) */
+		//checkout scm
+		//def jobName = "${env.JOB_NAME}"
+		//def repoPath = jobName.substring(0, jobName.lastIndexOf('/'))
+		git url: "https://macpersia@bitbucket.org/planty-assistant-devs/planty-assistant-skill.git", branch: branch
+	}
+
+	stage('build4mvn') {
+		//withMaven(jdk: 'jdk-8', maven: 'maven-3.6.0', /*, tempBinDir: ''*/) {
+			sh "mvn package -DskipTests"
+		//}
+	}
+
+	stage('publish artifact') {
+    	//sh "mvn deploy -DskipTests -DaltDeploymentRepository=snapshots::default::http://artifactory.topdanmark.local/artifactory/libs-snapshot"
+	    topCompliance()
+    }
+}
+
+
