@@ -5,7 +5,7 @@
 
 	<groupId>be.planty.skills.assistant</groupId>
 	<artifactId>planty-assistant-skill</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Planty Assistant Skill</name>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>be.planty.models.assistant</groupId>
 			<artifactId>planty-assistant-model</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
