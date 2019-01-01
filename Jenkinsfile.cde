@@ -1,4 +1,4 @@
-node ('ecs2') {
+node ('ecs-fargate') {
     def branch = "${env.BRANCH_NAME}".toLowerCase()
 
     stage('versions in use') {
