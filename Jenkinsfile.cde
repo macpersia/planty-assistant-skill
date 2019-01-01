@@ -27,8 +27,7 @@ node ('ecs-fargate') {
 	}
 
 	stage('publish artifact') {
-    	//sh "mvn deploy -DskipTests -DaltDeploymentRepository=snapshots::default::http://artifactory.topdanmark.local/artifactory/libs-snapshot"
-	    topCompliance()
+    	topCompliance()
     }
 }
 
