@@ -57,7 +57,7 @@
 		  <version>${ask.sdk.version}</version>
 		</dependency>
 
-<!--
+		<!--
 		<dependency>
 		  <groupId>com.amazon.alexa</groupId>
 		  <artifactId>ask-sdk-core</artifactId>
