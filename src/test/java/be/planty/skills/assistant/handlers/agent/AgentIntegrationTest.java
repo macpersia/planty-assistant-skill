@@ -59,7 +59,7 @@ public class AgentIntegrationTest {
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
-        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
+        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech) outputSpeech).getSsml());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class AgentIntegrationTest {
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
-        assertEquals("<speak>All right! I'm done!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
+        assertEquals("<speak>All right! I'm done!</speak>", ((SsmlOutputSpeech) outputSpeech).getSsml());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class AgentIntegrationTest {
         final CompletableFuture<Optional<Response>> futureSession;
         try {
             futureSession = agentClient.messageAgent(mockInput, message);
-        } catch(Throwable th) {
+        } catch (Throwable th) {
             th.printStackTrace();
             throw th;
         }
@@ -122,6 +122,6 @@ public class AgentIntegrationTest {
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
-        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech)outputSpeech).getSsml());
+        assertEquals("<speak>Agent pong!</speak>", ((SsmlOutputSpeech) outputSpeech).getSsml());
     }
 }

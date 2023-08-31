@@ -1,106 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>be.planty.skills.assistant</groupId>
-	<artifactId>planty-assistant-skill</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>be.planty.skills.assistant</groupId>
+    <artifactId>planty-assistant-skill</artifactId>
+    <version>0.1.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<name>Planty Assistant Skill</name>
-	<!--<description>Demo project for Spring Boot</description>-->
+    <name>Planty Assistant Skill</name>
+    <!--<description>Demo project for Spring Boot</description>-->
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.3.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>17</java.version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>17</java.version>
         <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
         <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
-		<ask.sdk.version>2.7.1</ask.sdk.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-	</properties>
+        <ask.sdk.version>2.65.0</ask.sdk.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>be.planty.models.assistant</groupId>
-			<artifactId>planty-assistant-model</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>be.planty.models.assistant</groupId>
+            <artifactId>planty-assistant-model</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
 
-		<dependency>
-		  <groupId>com.amazon.alexa</groupId>
-		  <artifactId>ask-sdk</artifactId>
-		  <version>${ask.sdk.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<!--
-		<dependency>
-		  <groupId>com.amazon.alexa</groupId>
-		  <artifactId>ask-sdk-core</artifactId>
-		  <version>${ask.sdk.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.amazon.alexa</groupId>
+            <artifactId>ask-sdk</artifactId>
+            <version>${ask.sdk.version}</version>
+        </dependency>
 
-		<dependency>
-		  <groupId>com.amazon.alexa</groupId>
-		  <artifactId>ask-sdk-lambda-support</artifactId>
-		  <version>${ask.sdk.version}</version>
-		</dependency>
+        <!--
+        <dependency>
+          <groupId>com.amazon.alexa</groupId>
+          <artifactId>ask-sdk-core</artifactId>
+          <version>${ask.sdk.version}</version>
+        </dependency>
 
-		<dependency>
-		  <groupId>com.amazon.alexa</groupId>
-		  <artifactId>ask-sdk-servlet-support</artifactId>
-		  <version>${ask.sdk.version}</version>
-		</dependency>
+        <dependency>
+          <groupId>com.amazon.alexa</groupId>
+          <artifactId>ask-sdk-lambda-support</artifactId>
+          <version>${ask.sdk.version}</version>
+        </dependency>
 
-		<dependency>
-		  <groupId>com.amazon.alexa</groupId>
-		  <artifactId>ask-sdk-dynamodb-persistence-adapter</artifactId>
-		  <version>${ask.sdk.version}</version>
-		</dependency>
+        <dependency>
+          <groupId>com.amazon.alexa</groupId>
+          <artifactId>ask-sdk-servlet-support</artifactId>
+          <version>${ask.sdk.version}</version>
+        </dependency>
 
-		<dependency>
-		  <groupId>com.amazon.alexa</groupId>
-		  <artifactId>ask-sdk-apache-client</artifactId>
-		  <version>${ask.sdk.version}</version>
-		</dependency>
+        <dependency>
+          <groupId>com.amazon.alexa</groupId>
+          <artifactId>ask-sdk-dynamodb-persistence-adapter</artifactId>
+          <version>${ask.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>com.amazon.alexa</groupId>
+          <artifactId>ask-sdk-apache-client</artifactId>
+          <version>${ask.sdk.version}</version>
+        </dependency>
 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
 
-	</dependencies>
-	<build>
-		<plugins>
-<!--
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-				  <classifier>exec</classifier>
-				</configuration>
-			</plugin>
--->
+    </dependencies>
+    <build>
+        <plugins>
+            <!--
+                        <plugin>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-maven-plugin</artifactId>
+                            <configuration>
+                              <classifier>exec</classifier>
+                            </configuration>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -126,50 +132,50 @@
                 </executions>
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.glassfish.jaxb</groupId>
-							<artifactId>jaxb-runtime</artifactId>
-							<version>${jaxb-runtime.version}</version>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.glassfish.jaxb</groupId>
+                            <artifactId>jaxb-runtime</artifactId>
+                            <version>${jaxb-runtime.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
 
-		</plugins>
-	</build>
-	<profiles>
-<!--
-		<profile>
-			<id>with-deps</id>
-			<properties>
-				<descriptorId>jar-with-dependencies</descriptorId>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.6</version>
-						<executions>
-							<execution>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
--->
-	</profiles>
+        </plugins>
+    </build>
+    <profiles>
+        <!--
+                <profile>
+                    <id>with-deps</id>
+                    <properties>
+                        <descriptorId>jar-with-dependencies</descriptorId>
+                    </properties>
+                    <build>
+                        <plugins>
+                            <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-assembly-plugin</artifactId>
+                                <version>2.6</version>
+                                <executions>
+                                    <execution>
+                                        <phase>prepare-package</phase>
+                                        <goals>
+                                            <goal>single</goal>
+                                        </goals>
+                                    </execution>
+                                </executions>
+                            </plugin>
+                        </plugins>
+                    </build>
+                </profile>
+        -->
+    </profiles>
 </project>
