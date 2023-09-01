@@ -10,10 +10,8 @@ import com.amazon.ask.model.ui.OutputSpeech;
 import com.amazon.ask.model.ui.SsmlOutputSpeech;
 import com.amazon.ask.response.ResponseBuilder;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -22,13 +20,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 /**
  * Test class for the {@link AgentClient}.
  */
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 public class AgentIntegrationTest {
 
     private static final AgentClient agentClient = new AgentClient();
@@ -55,7 +53,7 @@ public class AgentIntegrationTest {
         final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
         assertNotNull(futureSession);
         final Optional<Response> optResponse = futureSession.get(30, SECONDS);
-        assertTrue("No outputSpeech is present!", optResponse.isPresent());
+        assertTrue(optResponse.isPresent(), "No outputSpeech is present!");
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
@@ -84,7 +82,7 @@ public class AgentIntegrationTest {
         final CompletableFuture<Optional<Response>> futureSession = agentClient.messageAgent(mockInput, message);
         assertNotNull(futureSession);
         final Optional<Response> optResponse = futureSession.get(30, SECONDS);
-        assertTrue("No outputSpeech is present!", optResponse.isPresent());
+        assertTrue(optResponse.isPresent(), "No outputSpeech is present!");
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());
@@ -118,7 +116,7 @@ public class AgentIntegrationTest {
         }
         assertNotNull(futureSession);
         final Optional<Response> optResponse = futureSession.get(30, SECONDS);
-        assertTrue("No outputSpeech is present!", optResponse.isPresent());
+        assertTrue(optResponse.isPresent(), "No outputSpeech is present!");
         final OutputSpeech outputSpeech = optResponse.get().getOutputSpeech();
         assertNotNull(outputSpeech);
         assertNotNull("SSML", outputSpeech.getType());

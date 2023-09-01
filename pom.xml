@@ -5,7 +5,7 @@
 
     <groupId>be.planty.skills.assistant</groupId>
     <artifactId>planty-assistant-skill</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Planty Assistant Skill</name>
@@ -15,14 +15,14 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/><!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
         <ask.sdk.version>2.65.0</ask.sdk.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
@@ -87,11 +87,12 @@
           <artifactId>ask-sdk-apache-client</artifactId>
           <version>${ask.sdk.version}</version>
         </dependency>
--->
+        -->
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.9.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -99,13 +100,13 @@
     <build>
         <plugins>
             <!--
-                        <plugin>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-maven-plugin</artifactId>
-                            <configuration>
-                              <classifier>exec</classifier>
-                            </configuration>
-                        </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                  <classifier>exec</classifier>
+                </configuration>
+            </plugin>
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -149,33 +150,45 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.4.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
     <profiles>
         <!--
-                <profile>
-                    <id>with-deps</id>
-                    <properties>
-                        <descriptorId>jar-with-dependencies</descriptorId>
-                    </properties>
-                    <build>
-                        <plugins>
-                            <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-assembly-plugin</artifactId>
-                                <version>2.6</version>
-                                <executions>
-                                    <execution>
-                                        <phase>prepare-package</phase>
-                                        <goals>
-                                            <goal>single</goal>
-                                        </goals>
-                                    </execution>
-                                </executions>
-                            </plugin>
-                        </plugins>
-                    </build>
-                </profile>
+        <profile>
+            <id>with-deps</id>
+            <properties>
+                <descriptorId>jar-with-dependencies</descriptorId>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         -->
     </profiles>
 </project>
